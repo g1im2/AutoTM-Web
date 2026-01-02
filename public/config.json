@@ -1,0 +1,8 @@
+{
+  "API_BRAIN": "http://localhost:8088",
+  "API_MACRO": "http://localhost:8080",
+  "API_PORTFOLIO": "http://localhost:8081",
+  "API_EXECUTION": "http://localhost:8087",
+  "API_FLOWHUB": "http://localhost:8082",
+  "USE_MOCK": false
+}
