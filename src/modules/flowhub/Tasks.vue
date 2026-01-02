@@ -128,20 +128,21 @@
             <el-table-column label="操作" :min-width="250" fixed="right" align="left" header-align="center">
               <template #default="{ row }">
                 <div class="actions-cell">
-                  <el-button size="small" type="primary" @click="viewTaskDetail(row)">
+                  <el-button size="small" type="primary" :disabled="row.dataSource !== 'flowhub'" @click="viewTaskDetail(row)">
                     <el-icon><View /></el-icon>
                     详情
                   </el-button>
                   <el-button
                     size="small"
                     :type="row.enabled ? 'danger' : 'success'"
+                    :disabled="row.dataSource !== 'flowhub'"
                     @click="toggleTask(row)"
                   >
                     <el-icon v-if="row.enabled"><VideoPause /></el-icon>
                     <el-icon v-else><VideoPlay /></el-icon>
                     {{ row.enabled ? '停用' : '启用' }}
                   </el-button>
-                  <el-button size="small" @click="editTask(row)">
+                  <el-button size="small" :disabled="row.dataSource !== 'flowhub'" @click="editTask(row)">
                     <el-icon><Edit /></el-icon>
                     编辑
                   </el-button>
@@ -730,9 +731,9 @@ function buildProcessingTrend(tasksList: Task[]) {
 
 function mapTask(task: any): Task {
   const params = task.params || {}
-  const dataType = task.data_type || params.data_type || 'unknown'
-  const scheduleType = task.schedule_type || 'manual'
-  const scheduleValue = task.schedule_value
+  const dataType = task.data_type || task.job_type || task.type || params.data_type || 'unknown'
+  const scheduleType = task.schedule_type || task.scheduleType || 'manual'
+  const scheduleValue = task.schedule_value ?? task.scheduleValue
   const status = task.status || task.last_status || (task.enabled ? 'idle' : 'disabled')
   const createdAt = typeof task.created_at === 'number' ? task.created_at : undefined
   const updatedAt = typeof task.updated_at === 'number' ? task.updated_at : undefined
@@ -750,7 +751,7 @@ function mapTask(task: any): Task {
     schedule: formatSchedule(scheduleType, scheduleValue),
     status,
     statusText: statusLabels[status] || status,
-    dataSource: 'flowhub',
+    dataSource: task.data_source || task.dataSource || task.source || 'flowhub',
     lastRun: formatTimestamp(lastRunAt || updatedAt),
     nextRun: formatTimestamp(nextRunAt),
     successRate: deriveSuccessRate(runCount, successCount),
@@ -765,7 +766,7 @@ function mapTask(task: any): Task {
 
 async function refreshTasks() {
   try {
-    const resp = await flowhubApi.get('/api/v1/flowhub/tasks', { params: { limit: 100, offset: 0 } })
+    const resp = await flowhubApi.get('/api/v1/tasks/overview', { params: { limit: 200, offset: 0 } })
     const payload = resp.data?.data || resp.data || {}
     const taskList = payload.tasks || payload || []
     tasks.value = Array.isArray(taskList) ? taskList.map(mapTask) : []
@@ -809,14 +810,26 @@ async function refreshTasks() {
 }
 
 function viewTaskDetail(task: Task) {
+  if (task.dataSource !== 'flowhub') {
+    ElMessage.info('仅支持查看 Flowhub 任务详情')
+    return
+  }
   router.push(`/flowhub/detail/${task.id}`)
 }
 
 function editTask(task: Task) {
+  if (task.dataSource !== 'flowhub') {
+    ElMessage.info('仅支持编辑 Flowhub 任务')
+    return
+  }
   router.push(`/flowhub/create?id=${task.id}`)
 }
 
 async function toggleTask(task: Task) {
+  if (task.dataSource !== 'flowhub') {
+    ElMessage.info('仅支持操作 Flowhub 任务')
+    return
+  }
   const action = task.enabled ? 'disable' : 'enable'
 
   try {
