@@ -639,7 +639,7 @@ async function refreshHistory() {
   try {
     const taskId = taskDetail.value.id
     if (!taskId) return
-    const resp = await flowhubApi.get(`/api/v1/tasks/${taskId}/history`)
+    const resp = await flowhubApi.get(`/api/v1/flowhub/tasks/${taskId}/history`)
     const payload = resp.data?.data || resp.data || {}
     const history = payload.history || []
 
@@ -675,7 +675,7 @@ async function loadTaskDetail() {
   }
 
   try {
-    const resp = await flowhubApi.get(`/api/v1/tasks/${taskId}`)
+    const resp = await flowhubApi.get(`/api/v1/flowhub/tasks/${taskId}`)
     const task = resp.data?.data || resp.data
     if (!task) throw new Error('任务不存在')
 
@@ -690,7 +690,7 @@ async function loadTaskDetail() {
     let lastProgress = null
     if (task.last_job_id) {
       try {
-        const jobResp = await flowhubApi.get(`/api/v1/jobs/${task.last_job_id}`)
+        const jobResp = await flowhubApi.get(`/api/v1/flowhub/jobs/${task.last_job_id}`)
         const job = jobResp.data?.data || jobResp.data
         lastResult = job?.result || null
         lastError = job?.error || null
@@ -750,7 +750,7 @@ async function toggleTask() {
       }
     )
 
-    await flowhubApi.post(`/api/v1/tasks/${taskDetail.value.id}/${action}`)
+    await flowhubApi.post(`/api/v1/flowhub/tasks/${taskDetail.value.id}/${action}`)
     await loadTaskDetail()
     ElMessage.success(`任务已${action === 'enable' ? '启用' : '停用'}`)
   } catch (error) {
@@ -773,7 +773,7 @@ async function runTaskNow() {
       }
     )
 
-    await flowhubApi.post(`/api/v1/tasks/${taskDetail.value.id}/run`)
+    await flowhubApi.post(`/api/v1/flowhub/tasks/${taskDetail.value.id}/run`)
     ElMessage.success('任务已触发')
     await loadTaskDetail()
   } catch (error) {

@@ -203,7 +203,7 @@ async function loadTask() {
   if (!taskId) return
 
   try {
-    const resp = await flowhubApi.get(`/api/v1/tasks/${taskId}`)
+    const resp = await flowhubApi.get(`/api/v1/flowhub/tasks/${taskId}`)
     const task = resp.data?.data || resp.data
     if (!task) return
 
@@ -252,10 +252,10 @@ async function saveTask() {
 
     const taskId = route.query.id as string | undefined
     if (taskId) {
-      await flowhubApi.put(`/api/v1/tasks/${taskId}`, payload)
+      await flowhubApi.put(`/api/v1/flowhub/tasks/${taskId}`, payload)
       ElMessage.success('任务已更新')
     } else {
-      await flowhubApi.post('/api/v1/tasks', payload)
+      await flowhubApi.post('/api/v1/flowhub/tasks', payload)
       ElMessage.success('任务已创建')
     }
 

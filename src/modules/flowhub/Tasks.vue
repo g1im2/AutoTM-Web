@@ -765,7 +765,7 @@ function mapTask(task: any): Task {
 
 async function refreshTasks() {
   try {
-    const resp = await flowhubApi.get('/api/v1/tasks', { params: { limit: 100, offset: 0 } })
+    const resp = await flowhubApi.get('/api/v1/flowhub/tasks', { params: { limit: 100, offset: 0 } })
     const payload = resp.data?.data || resp.data || {}
     const taskList = payload.tasks || payload || []
     tasks.value = Array.isArray(taskList) ? taskList.map(mapTask) : []
@@ -784,7 +784,7 @@ async function refreshTasks() {
 
     processingTrendData.value = buildProcessingTrend(tasks.value)
     try {
-      const logsResp = await flowhubApi.get('/api/v1/jobs/recent-logs', {
+      const logsResp = await flowhubApi.get('/api/v1/flowhub/jobs/recent-logs', {
         params: { limit: 50, offset: 0 }
       })
       const logsPayload = logsResp.data?.data || {}
@@ -830,7 +830,7 @@ async function toggleTask(task: Task) {
       }
     )
 
-    await flowhubApi.post(`/api/v1/tasks/${task.id}/${action}`)
+    await flowhubApi.post(`/api/v1/flowhub/tasks/${task.id}/${action}`)
 
     await refreshTasks()
     ElMessage.success(`任务已${action === 'enable' ? '启用' : '停用'}`)

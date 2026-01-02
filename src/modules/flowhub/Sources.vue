@@ -755,7 +755,7 @@ function onTypeChange() {
 async function refreshSources() {
   try {
     chartsReady.value = false
-    const { data } = await flowhubApi.get('/api/v1/sources')
+    const { data } = await flowhubApi.get('/api/v1/flowhub/sources')
 
     if (data?.data?.sources && Array.isArray(data.data.sources)) {
       dataSources.value = data.data.sources.map((item: any) => ({
@@ -824,7 +824,7 @@ async function testConnection(source: DataSource) {
     source.status = 'testing'
     source.statusText = '测试中'
 
-    const { data } = await flowhubApi.post(`/api/v1/sources/${source.id}/test`)
+    const { data } = await flowhubApi.post(`/api/v1/flowhub/sources/${source.id}/test`)
 
     if (data?.data?.status === 'success') {
       source.status = 'online'
