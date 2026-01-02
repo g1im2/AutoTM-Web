@@ -19,10 +19,10 @@ const gatewayFallback = env.VITE_API_GATEWAY || runtimeConfig.API_GATEWAY || ''
 const USE_MOCK = parseBoolean(runtimeConfig.USE_MOCK ?? env.VITE_USE_MOCK)
 
 const BRAIN_BASE = getBaseUrl('API_BRAIN', gatewayFallback)
-const MACRO_BASE = getBaseUrl('API_MACRO', gatewayFallback)
-const PORTFOLIO_BASE = getBaseUrl('API_PORTFOLIO', gatewayFallback)
-const EXECUTION_BASE = getBaseUrl('API_EXECUTION', gatewayFallback)
-const FLOWHUB_BASE = getBaseUrl('API_FLOWHUB', gatewayFallback)
+const MACRO_BASE = BRAIN_BASE
+const PORTFOLIO_BASE = BRAIN_BASE
+const EXECUTION_BASE = BRAIN_BASE
+const FLOWHUB_BASE = BRAIN_BASE
 
 export const brainApi = axios.create({ baseURL: BRAIN_BASE })
 export const macroApi = axios.create({ baseURL: MACRO_BASE })
